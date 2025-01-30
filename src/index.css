@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: hsl(0, 0%, 3.53%);
+    --foreground: hsl(0 0% 98%);
+
+    --card: hsl(0, 0%, 3.53%);
+    --card-foreground: hsl(0 0% 98%);
+
+    --popover: hsl(0, 0%, 3.53%);
+    --popover-foreground: hsl(0 0% 98%);
+
+    --primary: hsl(144.76, 67.77%, 41.37%);
+    --primary-foreground: hsl(240 5.9% 10%);
+
+    --secondary: hsl(240, 5.56%, 7.06%);
+    --secondary-foreground: hsl(0 0% 98%);
+
+    --muted: hsl(240, 5.56%, 7.06%);
+    --muted-foreground: hsl(240 5% 64.9%);
+
+    --accent: hsl(240, 5.56%, 7.06%);
+    --accent-foreground: hsl(0 0% 98%);
+
+    --destructive: hsl(0.33, 72.33%, 50.39%);
+    --destructive-foreground: hsl(0 0% 98%);
+
+    --border: hsl(240, 5.56%, 7.06%);
+    --input: hsl(240, 5.56%, 7.06%);
+    --ring: hsl(240 4.9% 83.9%);
+
+    --chart-1: hsl(220 70% 50%);
+    --chart-2: hsl(160 60% 45%);
+    --chart-3: hsl(30 80% 55%);
+    --chart-4: hsl(280 65% 60%);
+    --chart-5: hsl(340 75% 55%);
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100vh;
+  font-family: "Noto Sans", serif;
+  font-optical-sizing: auto;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 26px;
+}
