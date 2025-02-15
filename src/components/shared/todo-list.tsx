@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { FiClock } from "react-icons/fi";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
 import { useEffect, useState } from "react";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { useAnimate, usePresence, motion } from "framer-motion";
@@ -9,14 +9,13 @@ import { Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn, formatRelativeDate } from "@/lib/utils";
+import { deleteTaskById, updateStatusById } from "@/services/serviceFn";
 
 type Props = {
   todo: InterfaceTodoListProps;
-  setTodos: React.Dispatch<React.SetStateAction<InterfaceTodoListProps[]>>;
 };
 
 export default function TodoList({
-  setTodos,
   todo: { content, createdAt, id, isCompleted },
 }: Props) {
   const [scope, animate] = useAnimate();
@@ -79,42 +78,36 @@ export default function TodoList({
     };
   }, []);
 
-  async function handleCheck(taskId: number) {
+  async function updateStatus(taskId: number) {
+    setLoadingState({ id: taskId, action: "check" });
+    toast.loading(`Updating task "${taskId}" status...`);
     try {
-      setLoadingState({ id: taskId, action: "check" });
-      toast.loading(`Updating task "${taskId}" status...`);
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setTodos((pv) =>
-        pv.map((todo) =>
-          todo.id === taskId
-            ? { ...todo, isCompleted: !todo.isCompleted }
-            : todo
-        )
-      );
-
-      toast.success(`Task "${taskId}" updated successfully`);
-      toast.dismiss();
-    } catch (error) {
-      console.log(error);
+      const result = await updateStatusById(id);
+      if (result.status) return;
+      toast.error("Failed to update task completion status");
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Unknown Error";
+      toast.error(errMsg);
+      console.log(errMsg, error);
     } finally {
+      toast.dismiss();
       setLoadingState({ id: null, action: null });
     }
   }
 
-  async function removeElement(taskId: number) {
+  async function deleteTask(taskId: number) {
+    setLoadingState({ id: taskId, action: "delete" });
+    toast.loading(`Deleting task "${taskId}"...`);
     try {
-      setLoadingState({ id: taskId, action: "delete" });
-      toast.loading(`Deleting task "${taskId}"...`);
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setTodos((pv) => pv.filter((todo) => todo.id !== taskId));
-
-      toast.success(`Task "${taskId}" deleted successfully`);
-      toast.dismiss();
+      const result = await deleteTaskById(id);
+      if (result.status) return;
+      toast.error("Failed to update task completion status");
     } catch (error) {
-      console.log(error);
+      const errMsg = error instanceof Error ? error.message : "Unknown Error";
+      toast.error(errMsg);
+      console.log(errMsg, error);
     } finally {
+      toast.dismiss();
       setLoadingState({ id: null, action: null });
     }
   }
@@ -140,13 +133,13 @@ export default function TodoList({
         ) : (
           <Checkbox
             checked={isCompleted}
-            onCheckedChange={() => handleCheck(id)}
+            onCheckedChange={() => updateStatus(id)}
             className="size-5 rounded"
           />
         )}
       </span>
 
-      <ReactMarkdown
+      <Markdown
         className={cn(
           "font-sans whitespace-break-spaces tracking-wider text-sm mt-[2px] flex-1 font-normal",
           {
@@ -155,7 +148,7 @@ export default function TodoList({
         )}
       >
         {content}
-      </ReactMarkdown>
+      </Markdown>
 
       <div className="h-6 flex items-center gap-2 ml-auto">
         <p className="flex items-center gap-1 whitespace-nowrap rounded bg-zinc-800 px-2 h-full text-muted-foreground">
@@ -168,7 +161,7 @@ export default function TodoList({
           size={"icon"}
           isLoading={isDeleting}
           className="size-6 rounded"
-          onClick={() => removeElement(id)}
+          onClick={() => deleteTask(id)}
           variant={isDeleting ? "secondary" : "destructive"}
         >
           <IoTrashBinOutline className="size-5" />

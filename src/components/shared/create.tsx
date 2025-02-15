@@ -18,14 +18,13 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { cn, generateRandomId } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAccount } from "wagmi";
+import { createTask } from "@/services/serviceFn";
 
-export default function CreateTaskForm({
-  setTodos,
-}: InterfaceCreateTaskFormProps) {
+export default function CreateTaskForm() {
   const { isConnected } = useAccount();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -38,22 +37,17 @@ export default function CreateTaskForm({
 
   async function onSubmit(values: InterfaceNeTaskSchema) {
     toast.loading("Creating task...");
-
-    const taskId = generateRandomId();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setTodos((pv) => [
-      {
-        id: taskId,
-        content: values.content,
-        createdAt: new Date(),
-        isCompleted: false,
-      },
-      ...pv,
-    ]);
-    toast.success(`Task "${taskId}" created!`);
-    toast.dismiss();
-    form.reset();
+    try {
+      const result = await createTask(values.content, String(new Date()));
+      if (!result.status) return;
+      form.reset();
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Unknown Error";
+      toast.error(errMsg);
+      console.log(errMsg, error);
+    } finally {
+      toast.dismiss();
+    }
   }
 
   const {

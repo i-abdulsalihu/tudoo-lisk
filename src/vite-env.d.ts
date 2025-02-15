@@ -8,8 +8,8 @@ interface InterfaceTodoListProps {
 }
 
 interface InterfaceTaskContainerProps {
+  isFetchingTasks: boolean | null;
   todos: InterfaceTodoListProps[];
-  setTodos: React.Dispatch<React.SetStateAction<InterfaceTodoListProps[]>>;
 }
 
 interface InterfaceCreateTaskFormProps {

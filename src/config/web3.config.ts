@@ -6,12 +6,14 @@ import { siteConfig } from "./site.config";
 
 export const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
+export const rpcUrl = liskSepolia.rpcUrls.default.http[0];
+
 export const web3Config = createConfig(
   getDefaultConfig({
     chains: [liskSepolia],
     connectors: [injected()],
     transports: {
-      [liskSepolia.id]: http(liskSepolia.rpcUrls.default.http[0]),
+      [liskSepolia.id]: http(rpcUrl),
     },
     walletConnectProjectId: projectId,
     appName: siteConfig.name,

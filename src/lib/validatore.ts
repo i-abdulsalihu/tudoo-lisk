@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const MAX_CONTENT_VALUE = 200;
+export const MAX_CONTENT_VALUE = 700;
 
 export const newTaskSchema = z.object({
   content: z
