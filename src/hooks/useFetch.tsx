@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { useCallback, useState } from "react";
 
 export const useFetch = (callbackFunction: any, options = {}) => {
   const [data, setData] = useState<any>(null);

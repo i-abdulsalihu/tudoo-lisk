@@ -1,5 +1,6 @@
 import { Contract, TransactionReceipt } from "ethers";
 import { ensureEthereumAvailable, getTaskContract } from ".";
+import { handleErrorMessage } from "@/lib/utils";
 
 export const getAllTasks = async () => {
   await ensureEthereumAvailable();
@@ -38,14 +39,7 @@ export const createTask = async (content: string, createdAt: string) => {
 
     return receipt;
   } catch (error: any) {
-    if (error.code === "ACTION_REJECTED") {
-      throw new Error("Transaction rejected by user");
-    } else if (error.code === "INSUFFICIENT_FUNDS") {
-      throw new Error("Insufficient funds for gas");
-    } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
-      throw new Error("Transaction may fail");
-    }
-
+    handleErrorMessage(error);
     reportError(error);
     throw error.message;
   }
@@ -61,12 +55,14 @@ export const updateStatusById = async (taskId: number) => {
     );
 
     const receipt: TransactionReceipt = await transaction.wait();
-    if (!receipt.status) {
-      throw new Error("Transaction failed");
+    if (!receipt || receipt.status !== 1) {
+      throw new Error(`Failed to update "${taskId}" status`);
     }
 
     return receipt;
   } catch (error: any) {
+    handleErrorMessage(error);
+
     reportError(error);
     throw error.message;
   }
@@ -80,12 +76,13 @@ export const deleteTaskById = async (taskId: number) => {
     const transaction: Contract = await contract.deleteTaskById(Number(taskId));
 
     const receipt: TransactionReceipt = await transaction.wait();
-    if (!receipt.status) {
-      throw new Error("Transaction failed");
+    if (!receipt || receipt.status !== 1) {
+      throw new Error(`Failed to delete "${taskId}"`);
     }
 
     return receipt;
   } catch (error: any) {
+    handleErrorMessage(error);
     reportError(error);
     throw error.message;
   }
@@ -99,12 +96,13 @@ export const deleteAllTasks = async () => {
     const transaction: Contract = await contract.deleteAllTasks();
 
     const receipt: TransactionReceipt = await transaction.wait();
-    if (!receipt.status) {
-      throw new Error("Transaction failed");
+    if (!receipt || receipt.status !== 1) {
+      throw new Error("Failed to delete all task");
     }
 
     return receipt;
   } catch (error: any) {
+    handleErrorMessage(error);
     reportError(error);
     throw error.message;
   }

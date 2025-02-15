@@ -30,3 +30,13 @@ export function formatRelativeDate(date: Date): string {
 export function generateRandomId(): number {
   return Math.floor(Math.random() * Date.now());
 }
+
+export function handleErrorMessage(error: any) {
+  if (error.code === "ACTION_REJECTED") {
+    throw new Error("Transaction rejected by user");
+  } else if (error.code === "INSUFFICIENT_FUNDS") {
+    throw new Error("Insufficient funds for gas");
+  } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+    throw new Error("Transaction may fail");
+  }
+}

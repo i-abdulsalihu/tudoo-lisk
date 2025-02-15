@@ -85,10 +85,9 @@ export default function TodoList({
       const result = await updateStatusById(id);
       if (result.status) return;
       toast.error("Failed to update task completion status");
-    } catch (error: unknown) {
-      const errMsg = error instanceof Error ? error.message : "Unknown Error";
-      toast.error(errMsg);
-      console.log(errMsg, error);
+    } catch (error: any) {
+      // toast.error(error);
+      console.log(error);
     } finally {
       toast.dismiss();
       setLoadingState({ id: null, action: null });
