@@ -6,7 +6,7 @@ import { siteConfig } from "./site.config";
 
 export const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
-export const rpcUrl = liskSepolia.rpcUrls.default.http[0];
+export const rpcUrl = "https://rpc.api.lisk.com";
 
 export const web3Config = createConfig(
   getDefaultConfig({
